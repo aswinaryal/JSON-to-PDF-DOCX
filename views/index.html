@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	 <link rel="stylesheet" href="https://semantic-ui.com/dist/semantic.min.css">
+  	 <script src="https://code.jquery.com/jquery-3.2.1.min.js" type="text/javascript"></script>
+  	 <script src="https://semantic-ui.com/dist/semantic.min.js" type="text/javascript"></script>
+	 <script src="https://fastcdn.org/FileSaver.js/1.1.20151003/FileSaver.min.js"></script>
+	 <script src="http://localhost:3000/jsfiles/wordexport.js"></script>
+
+</head>
+<body>
+ <div class="ui active dimmer" id="loader" style="display: none">
+    <div class="ui large text loader">Generating PDF Here</div>
+  </div>
+  <br>
+  <h1 class="ui center aligned header"> <br>Resume Generator</h1>
+
+  <div id="container_main" style="margin-left: 3% ; margin-right: 3%; display: block">
+
+	<div class="ui center aligned header">
+		<div id="previous_interaction">
+
+		<button class="ui red button" id="pdfbtn"> <i class="file text outline icon"></i> Generate PDF</button>
+		<button class="ui blue button" id="docbtn"> <i class="file text outline icon"></i> Generate Docx</button>
+
+		</div>
+		<div id="after_interaction" style="display: none">
+			<h4>Your File has been generated successfully inside download folder of the project</h4>
+		</div>
+  	</div>
+  </div>
+
+  <div id="docHtml" style="display: none">
+    <style>
+    .document_title{
+      text-align:center;
+    }
+    h4{
+      text-align:left;
+    }
+    .skillset{
+      text-align:center;
+      font-size:11px;
+      font-weight:normal;
+    }
+    .title{
+      text-align:left;
+      font-weight:bold;
+      font-size:12px;
+      border-bottom:1px solid #CCC;
+      width:100%;
+      float:left;
+      margin-top:10px;
+      padding-bottom:3px;
+    }
+    
+    .property{
+      font-size:10px;
+      font-weight:bold;
+      padding-bottom:20px;
+    }
+    .props_value{
+      font-weight:normal;
+      font-size:8px;
+    }
+    ul.a {list-style-type: circle;}
+    .props_value_li{
+      font-weight:normal;
+      font-size:8px;
+    }
+
+    </style>
+    
+<%
+    let skillset = [];
+    let clean_skill_set = [];
+   for(var i in jsonfile.skills){
+    clean_skill_set.push(jsonfile.skills[i].replace("#",''));
+   }
+
+   %>
+
+    <h3 class="document_title">Curriculum Vitae</h3>;
+
+    <div class="title">Skills</div><span class="skillset"><%=clean_skill_set%></span>;
+
+    <div class="title">Education</div>
+    <div class="property">
+    School Name:<span class="props_value"><%=jsonfile.education[0].school_name%></span>
+    <br>Logo:<span class="props_value"><%=jsonfile.education[0].logo%></span>
+    <br>Level:<span class="props_value"><%=jsonfile.education[0].level%></span>
+    <br>Title:<span class="props_value"><%=jsonfile.education[0].title%></span>
+    <br>Year:<span class="props_value"><%=jsonfile.education[0].year%></span>
+    </div>
+ 
+    <div class="property">
+    School Name:<span class="props_value"><%=jsonfile.education[1].school_name%></span>
+    <br>Logo:<span class="props_value"><%=jsonfile.education[1].logo%></span>
+    <br>Level:<span class="props_value"><%=jsonfile.education[1].level%></span>
+    <br>Title:<span class="props_value"><%=jsonfile.education[1].title%></span>
+    <br>Year:<span class="props_value"><%=jsonfile.education[1].year%></span>
+    </div>
+   
+    <div class="title">Experiences</div>
+    <div class="property">
+    Company Name:<span class="props_value"><%=jsonfile.experiences[0].company%></span>
+    <br>Company Logo:<span class="props_value"><%=jsonfile.experiences[0].company_logo%></span>
+    <br>Position:<span class="props_value"><%=jsonfile.experiences[0].postion%></span>
+    <br>Duties:<ul>
+      <li  class="props_value_li"><%=jsonfile.experiences[0].duties[0]%></li>
+      <li class="props_value_li"><%=jsonfile.experiences[0].duties[1]%></li>
+    </ul>
+    </div>
+    
+    <div class="property">
+    Company Name:<span class="props_value"><%=jsonfile.experiences[1].company%></span>
+    <br>Company Logo:<span class="props_value"><%=jsonfile.experiences[1].company_logo%></span>
+    <br>Position:<span class="props_value"><%=jsonfile.experiences[1].postion%></span>
+    <br>Work Year:<span class="props_value"><%=jsonfile.experiences[1].work_year%></span>
+    <br>Duties:<ul>
+      <li  class="props_value_li"><%=jsonfile.experiences[1].duties[0]%></li>
+       <li class="props_value_li"><%=jsonfile.experiences[1].duties[1]%></li>
+       <li class="props_value_li"><%=jsonfile.experiences[1].duties[2]%></li>
+    </ul>
+    </div>
+
+  </div>
+
+
+	<script>
+		
+	$('#pdfbtn').click( ()=> {
+	$('#container_main').css('display','none')
+    $('#loader').css('display','block')
+    $.ajax({
+      type: 'GET',
+      url: '/pdf' 
+    }).done( function(result){
+    $('#container_main').css('display','block')
+    $('#loader').css('display','none')
+    $('#previous_interaction').css('display','none')
+    $('#after_interaction').css('display','block')
+    }).fail(function(err){
+      console.log('Error occurred during ajax request '+err)
+    })
+
+	})
+
+	$('#docbtn').click(function(event){
+		$('#container_main').css('display','none')
+    	$('#loader').css('display','block')
+		$('#docHtml').wordExport();
+		 $('#container_main').css('display','block')
+    $('#loader').css('display','none')
+    $('#previous_interaction').css('display','none')
+    $('#after_interaction').css('display','block')
+	});
+	</script>
+</body>
+</html>
